@@ -81,9 +81,9 @@
 										<span class="menu-title">Administration</span>
 										<span class="menu-arrow"></span>
 									</span>
-									<div class="menu-sub menu-sub-accordion menu-active-bg">
+									<div class="menu-sub menu-sub-accordion menu-active-bg menu-item menu-accordion hover show">
 										<div class="menu-item">
-											<a class="menu-link" href="">
+											<a class="menu-link " href="">
 												<span class="menu-bullet">
 													<span class="bullet bullet-dot"></span>
 												</span>

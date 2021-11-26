@@ -8,4 +8,7 @@ export default {
     getUserRole(state) {
         return state.role;
     },
+    getVerified(state) {
+        return state.verified;
+    },
 };

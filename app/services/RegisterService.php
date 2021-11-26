@@ -17,7 +17,7 @@ class RegisterService implements RegisterInterface
         ])->first();
 
         if($user){
-            return true;
+            return $user;
         }
         
     }
@@ -26,13 +26,13 @@ class RegisterService implements RegisterInterface
            $created = User::create([
             'name'=>$request->userName,
             'email'=>$request->email,
-            'password'=>$request->password,
+            'password'=>Hash::make($request->password),
             'role'=>'user'
            ]);
            //send email verification    
            $created->sendEmailVerificationNotification();
-           $token = $created->createToken('auth_token')->plainTextToken;
-           return ['user'=>$created,'token'=>$token];
+        //    $token = $created->createToken('auth_token')->plainTextToken;
+           return ['user'=>$created];
       
 
     }

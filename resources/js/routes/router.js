@@ -5,21 +5,31 @@ import Login from '../pages/auth/login.vue'
 import Register from '../pages/auth/register.vue'
 import AdminLayout from '../layouts/dashboard/dashboardLayout.vue'
 import Dashboard from '../pages/admin/dashboard.vue'
+import store from '../store/index'
+
+
+
+
+
 
 const router = createRouter({
     history:createWebHistory(),
     routes :[
         {
             path:'/login',
-            component :Login
+            component :Login,
+            meta:{guest:true}
         },
         {
             path:'/register',
-            component :Register
+            component :Register,
+            meta:{guest:true}
         },
+       
         {
-            path:'/authorize',
-            component:Login,
+            path:'/verify-email/:id/:hash',
+            component:Register,
+            meta:{guest:true}
         },
         {
             path:'/admin',
@@ -37,10 +47,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    
+   
     // redirect to login page if not logged in and trying to access a restricted page
     const { authorize } = to.meta;
-    const currentUser = localStorage.getItem("token");
+    const currentUser = store.getters.getVerified;
 
     if (authorize) {
         if (!currentUser) {
@@ -50,15 +60,26 @@ router.beforeEach((to, from, next) => {
         // check if route is restricted by role
         if (
             authorize.length &&
-            !authorize.includes(localStorage.getItem('role'))
+            !authorize.includes(store.getters.getUserRole)
         ) {
             // role not authorised so redirect to home page
-            return next(false);
+            return next('/');
         }
     }
     next();
 });
 
+//guest pages
 
+router.beforeEach((to, from, next) => {
 
+    if (to.meta.guest && store.getters.getVerified) {
+        return next({path:'/'}); 
+    }
+
+    return next();
+});
 export default router
+
+
+

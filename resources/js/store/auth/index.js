@@ -9,8 +9,9 @@ export default{
             auth:false,
             userName:'',
             role:'',
-            email:''
-            
+            email:'',
+            verified:'',
+            init:null
         }
     },
     actions:authActions,

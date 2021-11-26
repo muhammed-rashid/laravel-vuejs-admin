@@ -5,6 +5,8 @@ export default {
         state.userName = payload.name;
         state.role = payload.role;
         state.auth = payload.auth;
-        state.email = payload.email
+        state.email = payload.email;
+        state.verified = payload.verified;
+      
     },
 };

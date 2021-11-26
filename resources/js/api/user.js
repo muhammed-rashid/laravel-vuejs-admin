@@ -13,7 +13,14 @@ export default {
     logOut: async ()=>{
         return Api().get('/auth/logout')
     },
-    ResendVerification : ()=>{
-        return Api().get('/email/resend')
+    ResendVerification : (data)=>{
+        return Api().post('/email/resend',data)
+    },
+    VerifyEmail :(url) =>{
+        return Api().get(url)
+    },
+    //login apis
+    Login:(data)=>{
+        return Api().post('auth/login',data)
     }
 }
