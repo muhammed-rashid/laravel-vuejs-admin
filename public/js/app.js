@@ -29218,7 +29218,6 @@ var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_7__.createRouter)({
 router.beforeEach(function (to, from, next) {
   // redirect to login page if not logged in and trying to access a restricted page
   var authorize = to.meta.authorize;
-  var guest = to.meta.guest;
   var currentUser = _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getVerified;
 
   if (authorize && !currentUser) {
@@ -29236,20 +29235,20 @@ router.beforeEach(function (to, from, next) {
       }
     });
   } else {
-    return next();
+    if (to.meta.guest) {
+      //check if user is authenticated
+      _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].dispatch("getUserDetails").then(function (res) {
+        if (_store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getVerified == "") {
+          return next();
+        } else {
+          next("/");
+        }
+      });
+    } else {
+      return next();
+    }
   }
-}); // router.beforeEach((to, from, next) => {
-//     if (to.meta.guest && !store.getters.getVerified) {
-//         store.dispatch("getUserDetails").then(res=>{
-//             if (store.getters.getVerified) {
-//                 return next('/')
-//             }else{
-//               return next('/login')
-//             }
-//         })
-//     }
-// });
-
+});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
 
 /***/ }),
