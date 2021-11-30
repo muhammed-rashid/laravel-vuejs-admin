@@ -10,36 +10,42 @@ const { cookies } = useCookies();
 
 
 //check if user have social login redirect
-if (cookies.get("authentication")) {
+// if (cookies.get("authentication")) {
       
-      localStorage.setItem("token", cookies.get("authentication").authToken);
-      cookies.remove("authentication");
-      getUser();
-  } else {
-      getUser();
-  }
+//       localStorage.setItem("token", cookies.get("authentication").authToken);
+//       cookies.remove("authentication");
+//       getUser();
+//   } else {
+//       getUser();
+//   }
   
 //check if user have social l
 
-function getUser() {
-    store
-        .dispatch("getUserDetails")
-        .then((res) => {
-            const app = createApp(App);
-            app.use(VueCookie);
-            app.use(store);
-            app.use(router);
-            app.mount("#app");
-        })
-        .catch((err) => {
-            //launch and dispach logout
-            store.dispatch("LogOutAction");
-            const app = createApp(App);
-            app.use(VueCookie);
-            app.use(store);
-            app.use(router);
-            app.mount("#app");
-        });
-}
+// function getUser() {
+//     store
+//         .dispatch("getUserDetails")
+//         .then((res) => {
+//             const app = createApp(App);
+//             app.use(VueCookie);
+//             app.use(store);
+//             app.use(router);
+//             app.mount("#app");
+//         })
+//         .catch((err) => {
+//             //launch and dispach logout
+//             store.dispatch("LogOutAction");
+//             const app = createApp(App);
+//             app.use(VueCookie);
+//             app.use(store);
+//             app.use(router);
+//             app.mount("#app");
+//         });
+// }
 
 
+
+const app = createApp(App);
+app.use(VueCookie);
+app.use(store);
+app.use(router);
+app.mount("#app");

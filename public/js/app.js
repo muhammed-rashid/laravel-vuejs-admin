@@ -29074,34 +29074,41 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 var _useCookies = (0,vue3_cookies__WEBPACK_IMPORTED_MODULE_2__.useCookies)(),
     cookies = _useCookies.cookies; //check if user have social login redirect
+// if (cookies.get("authentication")) {
+//       localStorage.setItem("token", cookies.get("authentication").authToken);
+//       cookies.remove("authentication");
+//       getUser();
+//   } else {
+//       getUser();
+//   }
+//check if user have social l
+// function getUser() {
+//     store
+//         .dispatch("getUserDetails")
+//         .then((res) => {
+//             const app = createApp(App);
+//             app.use(VueCookie);
+//             app.use(store);
+//             app.use(router);
+//             app.mount("#app");
+//         })
+//         .catch((err) => {
+//             //launch and dispach logout
+//             store.dispatch("LogOutAction");
+//             const app = createApp(App);
+//             app.use(VueCookie);
+//             app.use(store);
+//             app.use(router);
+//             app.mount("#app");
+//         });
+// }
 
 
-if (cookies.get("authentication")) {
-  localStorage.setItem("token", cookies.get("authentication").authToken);
-  cookies.remove("authentication");
-  getUser();
-} else {
-  getUser();
-} //check if user have social l
-
-
-function getUser() {
-  _store_index_js__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch("getUserDetails").then(function (res) {
-    var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)(_App_vue__WEBPACK_IMPORTED_MODULE_4__["default"]);
-    app.use(vue3_cookies__WEBPACK_IMPORTED_MODULE_2__["default"]);
-    app.use(_store_index_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
-    app.use(_routes_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-    app.mount("#app");
-  })["catch"](function (err) {
-    //launch and dispach logout
-    _store_index_js__WEBPACK_IMPORTED_MODULE_3__["default"].dispatch("LogOutAction");
-    var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)(_App_vue__WEBPACK_IMPORTED_MODULE_4__["default"]);
-    app.use(vue3_cookies__WEBPACK_IMPORTED_MODULE_2__["default"]);
-    app.use(_store_index_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
-    app.use(_routes_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-    app.mount("#app");
-  });
-}
+var app = (0,vue__WEBPACK_IMPORTED_MODULE_0__.createApp)(_App_vue__WEBPACK_IMPORTED_MODULE_4__["default"]);
+app.use(vue3_cookies__WEBPACK_IMPORTED_MODULE_2__["default"]);
+app.use(_store_index_js__WEBPACK_IMPORTED_MODULE_3__["default"]);
+app.use(_routes_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
+app.mount("#app");
 
 /***/ }),
 
@@ -29167,43 +29174,43 @@ __webpack_require__.r(__webpack_exports__);
 var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_7__.createRouter)({
   history: (0,vue_router__WEBPACK_IMPORTED_MODULE_7__.createWebHistory)(),
   routes: [{
-    path: '/login',
+    path: "/login",
     component: _pages_auth_login_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
     meta: {
       guest: true
     }
   }, {
-    path: '/register',
+    path: "/register",
     component: _pages_auth_register_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     meta: {
       guest: true
     }
   }, {
-    path: '/verify-email/:id/:hash',
+    path: "/verify-email/:id/:hash",
     component: _pages_auth_register_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
     meta: {
       guest: true
     }
   }, {
-    path: '/forgot-password',
+    path: "/forgot-password",
     component: _pages_auth_forgetPassword__WEBPACK_IMPORTED_MODULE_4__["default"],
     meta: {
       guest: true
     }
   }, {
-    path: '/reset-password',
+    path: "/reset-password",
     component: _pages_auth_resetPassword__WEBPACK_IMPORTED_MODULE_5__["default"],
     meta: {
       guest: true
     }
   }, {
-    path: '/admin',
+    path: "/admin",
     component: _layouts_dashboard_dashboardLayout_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
     meta: {
-      authorize: ['user']
+      authorize: ["user"]
     },
     children: [{
-      path: 'dashboard',
+      path: "dashboard",
       component: _pages_admin_dashboard_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
     }]
   }]
@@ -29213,28 +29220,14 @@ router.beforeEach(function (to, from, next) {
   var authorize = to.meta.authorize;
   var currentUser = _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getVerified;
 
-  if (authorize) {
-    if (!currentUser) {
-      // not logged in so redirect to login page with the return url
-      return next({
-        path: "/login"
-      });
-    } // check if route is restricted by role
-
-
-    if (authorize.length && !authorize.includes(_store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getUserRole)) {
-      // role not authorised so redirect to home page
-      return next(from.path);
-    }
-  }
-
-  next();
-}); //guest pages
-
-router.beforeEach(function (to, from, next) {
-  if (to.meta.guest && _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getVerified) {
-    return next({
-      path: '/'
+  if (authorize.length && currentUser == "") {
+    _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].dispatch("getUserDetails").then(function (res) {
+      if (!_store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getAuth) {
+        alert('here');
+        return next('/admin');
+      } else {
+        next();
+      }
     });
   }
 
@@ -29290,10 +29283,8 @@ __webpack_require__.r(__webpack_exports__);
           role: res.data.role,
           verified: res.data.email_verified_at
         });
-        resolve(res.data);
-      })["catch"](function (err) {
-        reject(err);
       });
+      resolve(true);
     });
   }
 });
