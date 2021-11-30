@@ -33,7 +33,7 @@ export default {
                     auth: true,
                     role: res.data.role,
                     verified: res.data.email_verified_at,
-                    init: true,
+                 
                 });
                 resolve(res.data)
             }).catch(err=>{

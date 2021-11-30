@@ -26,6 +26,14 @@
                   >Sign in here</router-link
                 >
               </div>
+              <div
+                class="alert alert-danger mt-3"
+                role="alert"
+                v-for="error in errors"
+                :key="error"
+              >
+                {{ error }}
+              </div>
             </div>
             <div class="alert alert-warning mb-3" role="alert" v-if="success">
               {{waringMsg}}<a
@@ -33,6 +41,7 @@
                 ><b>&nbsp;&nbsp; Resend Verification Link</b></a
               >
             </div>
+           
 
             <button
               type="button"
@@ -60,6 +69,14 @@
                   v-model="userName"
                   autocomplete="off"
                 />
+                <p
+                class="message"
+                :class="{ error: v$.userName.$errors.length }"
+                v-for="error in v$.userName.$errors"
+                :key="error"
+              >
+                {{ error.$message }}
+              </p>
               </div>
             </div>
 
@@ -71,6 +88,14 @@
                 v-model="email"
                 autocomplete="off"
               />
+               <p
+                class="message"
+                :class="{ error: v$.email.$errors.length }"
+                v-for="error in v$.email.$errors"
+                :key="error"
+              >
+                {{ error.$message }}
+              </p>
             </div>
 
             <div class="mb-10 fv-row" data-kt-password-meter="true">
@@ -86,6 +111,14 @@
                     v-model="password"
                     autocomplete="off"
                   />
+                   <p
+                class="message"
+                :class="{ error: v$.password.$errors.length }"
+                v-for="error in v$.password.$errors"
+                :key="error"
+              >
+                {{ error.$message }}
+              </p>
                   <span
                     class="
                       btn btn-sm btn-icon
@@ -102,52 +135,10 @@
                   </span>
                 </div>
 
-                <div
-                  class="d-flex align-items-center mb-3"
-                  data-kt-password-meter-control="highlight"
-                >
-                  <div
-                    class="
-                      flex-grow-1
-                      bg-secondary bg-active-success
-                      rounded
-                      h-5px
-                      me-2
-                    "
-                  ></div>
-                  <div
-                    class="
-                      flex-grow-1
-                      bg-secondary bg-active-success
-                      rounded
-                      h-5px
-                      me-2
-                    "
-                  ></div>
-                  <div
-                    class="
-                      flex-grow-1
-                      bg-secondary bg-active-success
-                      rounded
-                      h-5px
-                      me-2
-                    "
-                  ></div>
-                  <div
-                    class="
-                      flex-grow-1
-                      bg-secondary bg-active-success
-                      rounded
-                      h-5px
-                    "
-                  ></div>
-                </div>
+               
               </div>
 
-              <div class="text-muted">
-                Use 8 or more characters with a mix of letters, numbers &amp;
-                symbols.
-              </div>
+              
             </div>
 
             <div class="fv-row mb-5">
@@ -160,6 +151,16 @@
                 v-model="confirmPassword"
                 autocomplete="off"
               />
+               <p
+                class="message"
+                :class="{ error: v$.confirmPassword.$errors.length }"
+                v-for="error in v$.confirmPassword.$errors"
+                :key="error"
+              >
+                {{ error.$message.replace('This Field', 'Confirm Password').replace('The value','Confirm Password').replace('other value','password') }}
+               
+              </p>
+              
             </div>
 
             <div class="fv-row mb-10">
@@ -192,8 +193,8 @@
                 class="btn btn-lg btn-primary"
                 @click.prevent="RegisterUser"
               >
-                <span class="indicator-label">Submit</span>
-                <span class="indicator-progress"
+                <span class="indicator-label" v-if="!loading">Submit</span>
+                <span v-else
                   >Please wait...
                   <span
                     class="spinner-border spinner-border-sm align-middle ms-2"
@@ -210,7 +211,20 @@
 
 <script>
 import user from "../../api/user";
+import ErrorHandler from "../../utils/errors";
+import { email, required,sameAs } from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
 export default {
+  setup: () => ({ v$: useVuelidate() }),
+  validations() {
+    return {
+      password: { required },
+      email: { required, email },
+      userName:{required},
+      confirmPassword : { required,sameAsPassword: sameAs(this.password )}
+
+    };
+  },
   methods: {
     LoginWithGoogle() {
       user.GoogleAuth().then((res) => {
@@ -220,6 +234,15 @@ export default {
 
     //register a user
     RegisterUser() {
+      //frontent validations
+      this.v$.$touch();
+      if (this.v$.$invalid) {
+      
+        return;
+      }
+
+ this.loading = true
+
       user
         .RegitserUser({
           userName: this.userName,
@@ -233,7 +256,7 @@ export default {
           this.confirmPassword =""
 
           
-   
+        localStorage.setItem("token", res.data.data.token);
         this.$store.commit('Login',{
         id:res.data.data.id,
         email:res.data.data.email,
@@ -242,11 +265,18 @@ export default {
         role:res.data.data.role,
         verified:res.data.data.email_verified_at
       })
+
+         this.loading = false
+          this.v$.$reset();
 		      this.success = true
+          this.errors = []
 		      this.waringMsg = res.data.message
+
+          
         })
         .catch((err) => {
-          console.log(err);
+           this.loading = false
+          this.errors = ErrorHandler(err.response)
         });
     },
     resend() {
@@ -261,7 +291,9 @@ export default {
       password: "",
       confirmPassword: "",
       success: false,
-	  waringMsg:''
+	    waringMsg:'',
+      errors:[],
+      loading:false
     };
   },
 
@@ -283,6 +315,8 @@ export default {
 
 		}).catch(err=>{
 			this.waringMsg = err.response.data.message
+     
+     
 		})
 
       

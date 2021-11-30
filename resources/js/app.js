@@ -8,15 +8,18 @@ import App from "./App.vue";
 import { useCookies } from "vue3-cookies";
 const { cookies } = useCookies();
 
+
 //check if user have social login redirect
 if (cookies.get("authentication")) {
-  console.log(cookies.get("authentication"));
-    localStorage.setItem("token", cookies.get("authentication").authToken);
-    cookies.remove("authentication");
-    getUser();
-} else {
-    getUser();
-}
+      
+      localStorage.setItem("token", cookies.get("authentication").authToken);
+      cookies.remove("authentication");
+      getUser();
+  } else {
+      getUser();
+  }
+  
+//check if user have social l
 
 function getUser() {
     store

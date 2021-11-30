@@ -31,8 +31,8 @@ class RegisterService implements RegisterInterface
            ]);
            //send email verification    
            $created->sendEmailVerificationNotification();
-        //    $token = $created->createToken('auth_token')->plainTextToken;
-           return ['user'=>$created];
+           $token = $created->createToken('auth_token')->plainTextToken;
+           return ['user'=>$created,'token'=>$token];
       
 
     }

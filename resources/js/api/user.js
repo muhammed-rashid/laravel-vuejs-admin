@@ -22,5 +22,12 @@ export default {
     //login apis
     Login:(data)=>{
         return Api().post('auth/login',data)
+    },
+    //send reset email
+    forgotPassword:(data)=>{
+        return Api().post('auth/forgot-password',data)
+    },
+    resetPassword:(data)=>{
+        return Api().post('/auth/reset-password',data)
     }
 }

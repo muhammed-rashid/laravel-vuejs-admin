@@ -16,6 +16,8 @@
         "postcss": "^8.1.14"
     },
     "dependencies": {
+        "@vuelidate/core": "^2.0.0-alpha.32",
+        "@vuelidate/validators": "^2.0.0-alpha.25",
         "vue": "^3.2.21",
         "vue-loader": "^16.8.3",
         "vue-router": "^4.0.12",

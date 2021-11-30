@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 use Illuminate\Auth\Notifications\VerifyEmail;
-
+use Illuminate\Auth\Notifications\ResetPassword;
 use Carbon\Carbon;
 class AuthServiceProvider extends ServiceProvider
 {
@@ -26,11 +26,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
-
-
-
-
         VerifyEmail::createUrlUsing(function ($notifiable) {
             $params = [
               "expires" => Carbon::now()
@@ -62,7 +57,9 @@ class AuthServiceProvider extends ServiceProvider
               $signature;
           });
 
-
+          ResetPassword::createUrlUsing(function ($user, string $token) {
+            return env('APP_FRONT') . '/reset-password?token=' . $token;
+        });
 
         
     }

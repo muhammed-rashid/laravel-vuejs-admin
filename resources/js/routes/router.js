@@ -5,7 +5,10 @@ import Login from '../pages/auth/login.vue'
 import Register from '../pages/auth/register.vue'
 import AdminLayout from '../layouts/dashboard/dashboardLayout.vue'
 import Dashboard from '../pages/admin/dashboard.vue'
+import Forgot from '../pages/auth/forgetPassword'
+import Reset from '../pages/auth/resetPassword'
 import store from '../store/index'
+
 
 
 
@@ -29,6 +32,16 @@ const router = createRouter({
         {
             path:'/verify-email/:id/:hash',
             component:Register,
+            meta:{guest:true}
+        },
+        {
+            path:'/forgot-password',
+            component:Forgot,
+            meta:{guest:true}
+        },
+        {
+            path:'/reset-password',
+            component:Reset,
             meta:{guest:true}
         },
         {
@@ -63,7 +76,7 @@ router.beforeEach((to, from, next) => {
             !authorize.includes(store.getters.getUserRole)
         ) {
             // role not authorised so redirect to home page
-            return next('/');
+            return next(from.path);
         }
     }
     next();
