@@ -55,20 +55,45 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     // redirect to login page if not logged in and trying to access a restricted page
     const { authorize } = to.meta;
+    const {guest} = to.meta
     const currentUser = store.getters.getVerified;
 
-    if (authorize.length && currentUser == "") {
-        
-            store.dispatch("getUserDetails").then((res) => {
-                if (!store.getters.getAuth) {
-                    alert('here')
-                   return next('/admin')
+    if (authorize && !currentUser) {
+        store.dispatch("getUserDetails").then((res) => {
+            if (!store.getters.getVerified) {
+                next("/login");
+            } else {
+               
+                //check if user has the role to access the page
+                if (
+                    authorize.length &&
+                    !authorize.includes(store.getters.getUserRole)
+                ) {
+                    // role not authorised so redirect to home page
+
+                    return next("/");
                 } else {
-                    next();
+                    return next();
                 }
-            });
-        
-    } 
-    return next()
-})     
+            }
+        });
+    } else {
+        return next();
+    }
+});
+
+// router.beforeEach((to, from, next) => {
+
+//     if (to.meta.guest && !store.getters.getVerified) {
+//         store.dispatch("getUserDetails").then(res=>{
+//             if (store.getters.getVerified) {
+//                 return next('/')
+//             }else{
+//               return next('/login')
+//             }
+//         })
+//     }
+
+    
+// });
 export default router;

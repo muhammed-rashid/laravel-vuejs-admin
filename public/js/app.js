@@ -29218,21 +29218,38 @@ var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_7__.createRouter)({
 router.beforeEach(function (to, from, next) {
   // redirect to login page if not logged in and trying to access a restricted page
   var authorize = to.meta.authorize;
+  var guest = to.meta.guest;
   var currentUser = _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getVerified;
 
-  if (authorize.length && currentUser == "") {
+  if (authorize && !currentUser) {
     _store_index__WEBPACK_IMPORTED_MODULE_6__["default"].dispatch("getUserDetails").then(function (res) {
-      if (!_store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getAuth) {
-        alert('here');
-        return next('/admin');
+      if (!_store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getVerified) {
+        next("/login");
       } else {
-        next();
+        //check if user has the role to access the page
+        if (authorize.length && !authorize.includes(_store_index__WEBPACK_IMPORTED_MODULE_6__["default"].getters.getUserRole)) {
+          // role not authorised so redirect to home page
+          return next("/");
+        } else {
+          return next();
+        }
       }
     });
+  } else {
+    return next();
   }
+}); // router.beforeEach((to, from, next) => {
+//     if (to.meta.guest && !store.getters.getVerified) {
+//         store.dispatch("getUserDetails").then(res=>{
+//             if (store.getters.getVerified) {
+//                 return next('/')
+//             }else{
+//               return next('/login')
+//             }
+//         })
+//     }
+// });
 
-  return next();
-});
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (router);
 
 /***/ }),
@@ -29283,8 +29300,10 @@ __webpack_require__.r(__webpack_exports__);
           role: res.data.role,
           verified: res.data.email_verified_at
         });
+        resolve(true);
+      })["catch"](function (err) {
+        return resolve(true);
       });
-      resolve(true);
     });
   }
 });

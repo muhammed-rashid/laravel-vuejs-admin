@@ -35,9 +35,11 @@ export default {
                     verified: res.data.email_verified_at,
                  
                 });
+
+                resolve(true)
                
-            })
-            resolve(true)
+            }).catch((err)=> resolve(true))
+           
         })
     },
 };
